@@ -16,6 +16,8 @@ import com.example.mysqlSpring.model.EmployeeResponseGet;
 import com.example.mysqlSpring.model.EmployeeResponseUpdate;
 import com.example.mysqlSpring.service.EmployeeService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/mysql/")
 public class EmployeeController {
@@ -23,7 +25,7 @@ public class EmployeeController {
     EmployeeService employeeService;
 
     @PostMapping("/addEmployee")
-    public ResponseEntity<EmployeeResponseUpdate> addEmployee(@RequestBody EmployeeDetails employeeDetails){
+    public ResponseEntity<EmployeeResponseUpdate> addEmployee(@Valid @RequestBody EmployeeDetails employeeDetails){
         return employeeService.addEmployee(employeeDetails);
     }
 

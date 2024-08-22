@@ -1,5 +1,7 @@
 package com.example.mysqlSpring.service;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -83,9 +85,10 @@ public class EmployeeService {
                 // Filter employees based on condition
                 List<EmployeeResponseDTO> filteredEmployeeList = employeeList.stream()
                     .filter(employee -> {
-                        String dateOfJoining = employee.getDateOfJoining();
+                        Date dateOfJoining = employee.getDateOfJoining();
                         if (dateOfJoining == null) return false; // Skip if dateOfJoining is null
-                        LocalDateTime joiningDate = LocalDateTime.parse(employee.getDateOfJoining(), formatter);
+            
+                        LocalDateTime joiningDate = LocalDateTime.ofInstant(dateOfJoining.toInstant(), ZoneId.of("UTC"));
                         LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
                         int yearsOfExperienceCalculated = (int) ChronoUnit.YEARS.between(joiningDate, now);
 
@@ -109,7 +112,7 @@ public class EmployeeService {
                 if ((managerId == null || managerId.equalsIgnoreCase(currentManagerId)) && Integer.parseInt(currentManagerId)>0 &&
                     (yearOfExperience == null || employeeList.stream()
                         .anyMatch(employee -> {
-                            LocalDateTime joiningDate = LocalDateTime.parse(employee.getDateOfJoining(), formatter);
+                            LocalDateTime joiningDate = LocalDateTime.ofInstant(employee.getDateOfJoining().toInstant(), ZoneId.of("UTC"));
                             LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
                             int yearsOfExperienceCalculated = (int) ChronoUnit.YEARS.between(joiningDate, now);
                             return yearsOfExperienceCalculated >= yearOfExperience;
