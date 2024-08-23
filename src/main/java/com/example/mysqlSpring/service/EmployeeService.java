@@ -1,8 +1,5 @@
 package com.example.mysqlSpring.service;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,7 +68,6 @@ public class EmployeeService {
                 employeesByManager.putIfAbsent(mngId, new ArrayList<>());
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
         // Create the filtered responses
         List<EmployeeResponse> filteredResponses = employeesByManager.entrySet().stream()
             .map(entry -> {
@@ -129,10 +125,19 @@ public class EmployeeService {
             })
             .filter(Objects::nonNull) // Remove null responses
             .collect(Collectors.toList());
-    
-        String responseMessage = filteredResponses.isEmpty() ? "No employees found" : "Successfully fetched";
-        EmployeeResponseGet response = new EmployeeResponseGet(responseMessage, filteredResponses);
-        return ResponseEntity.ok(response);
+        
+        if(filteredResponses.isEmpty()){
+            String responseMessage="No employees found";
+            EmployeeResponseGet response = new EmployeeResponseGet(responseMessage, filteredResponses);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        else{
+            String responseMessage="Successfully fetched";
+            EmployeeResponseGet response = new EmployeeResponseGet(responseMessage, filteredResponses);
+            return ResponseEntity.ok(response);
+        }
+        
+        
     }
 
     public ResponseEntity<EmployeeResponseUpdate> updateEmployee(String id, String managerId) {
